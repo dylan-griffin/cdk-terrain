@@ -277,3 +277,15 @@ test("expressions correctly resolve string wrapped objects", () => {
     `"\${keys({"a" = "b"})}"`,
   );
 });
+
+test("escapes quotes in object keys (issue #350)", () => {
+  expect(
+    resolveExpression(Op.or(true, { 'he"llo': "x" })),
+  ).toMatchInlineSnapshot(`"\${(true || {"he\\"llo" = "x"})}"`);
+});
+
+test("escapes template markers in object keys (issue #350)", () => {
+  expect(
+    resolveExpression(Op.or(true, { "${injected}": "x" })),
+  ).toMatchInlineSnapshot(`"\${(true || {"$\${injected}" = "x"})}"`);
+});

@@ -1264,3 +1264,41 @@ test("import block", () => {
     }"
   `);
 });
+
+test("escapes quotes in HCL map keys (issue #350)", () => {
+  const app = Testing.app();
+  const stack = new TerraformStack(app, "test");
+
+  new TerraformLocal(stack, "test", {
+    'he"llo': "world",
+  });
+
+  expect(Testing.synthHcl(stack)).toMatchInlineSnapshot(`
+    "
+
+    locals {
+        test = {
+    "he\\"llo" = "world"
+    }
+    }"
+  `);
+});
+
+test("leaves bare identifiers unquoted in HCL (issue #350)", () => {
+  const app = Testing.app();
+  const stack = new TerraformStack(app, "test");
+
+  new TerraformLocal(stack, "test", {
+    normal_key: "value",
+  });
+
+  expect(Testing.synthHcl(stack)).toMatchInlineSnapshot(`
+    "
+
+    locals {
+        test = {
+    normal_key = "value"
+    }
+    }"
+  `);
+});
