@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 import { Tokenization } from "../tokens/token";
+import { quotedStringKey } from "../tfExpression";
 
 /**
  *
@@ -16,10 +17,11 @@ function escapeQuotes(str: string): string {
 }
 
 /**
- *
+ * Wraps a key in quotes if it is not a valid bare identifier, using
+ * quotedStringKey to properly escape special characters.
  */
 function wrapIdentifierInQuotesIfNeeded(key: string): string {
-  return /(^\d)|[^A-Za-z0-9_-]/.test(key) ? `"${key}"` : key;
+  return /(^\d)|[^A-Za-z0-9_-]/.test(key) ? quotedStringKey(key) : key;
 }
 
 /**
